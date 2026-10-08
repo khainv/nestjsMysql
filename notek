@@ -1,0 +1,1 @@
+- Nếu bị xung đột port thì kill port =>npx kill-port 3000
