@@ -11,6 +11,8 @@ import { AdminkModule } from './modules/admink/admink.module.js';
 import { Admin } from './entities/admin.entity.js';
 import { LoggingMiddleware } from './middlewares/logging/logging.middleware.js';
 import { AuthModule } from './modules/auth/auth.module.js';
+import { APP_GUARD } from '@nestjs/core';
+import { JwtAuthGuard } from './modules/auth/guards/jwt-auth.guard.js';
 
 export const { ObserveModule, ObserveInstrument } = createObserveModule();
 
@@ -39,7 +41,14 @@ export const { ObserveModule, ObserveInstrument } = createObserveModule();
     AuthModule,
   ],
   controllers: [AppController, UserController],
-  providers: [AppService, UserService],
+  providers: [
+    AppService,
+    UserService,
+    {
+      provide: APP_GUARD,
+      useClass: JwtAuthGuard,
+    },
+  ],
 })
 export class AppModule implements NestModule {
   //constructor(private dataSource: DataSource) {}

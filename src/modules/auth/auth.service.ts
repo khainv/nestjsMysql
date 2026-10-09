@@ -11,7 +11,7 @@ export class AuthService {
   async login(
     adm_account: string,
     password: string,
-  ): Promise<{ access_token: string }> {
+  ): Promise<{ access_token: string; adm_name: string }> {
     const user = await this.adminkService.findOne({ adm_account });
     if (user?.adm_password !== password) {
       throw new UnauthorizedException('password không trùng nhau');
@@ -19,6 +19,7 @@ export class AuthService {
     // Payload chứa thông tin định danh người dùng
     const payload = { sub: user.id, adm_account: user.adm_account };
     return {
+      adm_name: user.adm_name,
       access_token: await this.jwtService.signAsync(payload),
     };
   }

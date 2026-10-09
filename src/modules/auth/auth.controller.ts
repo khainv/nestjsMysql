@@ -5,11 +5,13 @@ import {
   Post,
   UseGuards,
   Request,
+  Get,
 } from '@nestjs/common';
 import { AuthService } from './auth.service.js';
 import { AdminkService } from '../admink/admink.service.js';
 import * as bcrypt from 'bcrypt';
 import { LocalAuthGuard } from './guards/local-auth.guard.js';
+import { isPublic } from './filter/is.public.router.js';
 @Controller('auth')
 export class AuthController {
   constructor(
@@ -28,5 +30,11 @@ export class AuthController {
       );
     }
     return this.authService.login(req.user.adm_account, req.user.adm_password); //gọi autheService để save to access-token
+  }
+  @isPublic()
+  @Get('login')
+  async getLogin(@Request() req: any) {
+    // Nếu không tìm thấy, chủ động ném ra lỗi 404 của NestJS
+    return 'get login'; //gọi autheService để save to access-token
   }
 }
