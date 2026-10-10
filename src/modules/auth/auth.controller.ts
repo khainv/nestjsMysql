@@ -18,10 +18,10 @@ export class AuthController {
     private readonly authService: AuthService,
     private readonly adminkService: AdminkService,
   ) {}
-  @UseGuards(LocalAuthGuard)
   @Post('login')
   async login(@Request() req: any) {
     //console.log(req.user.adm_account);
+    console.log('check xem có chạy vào đây không');
     console.log(req.user.adm_account);
     // Nếu không tìm thấy, chủ động ném ra lỗi 404 của NestJS
     if (!req.user.adm_password) {
@@ -32,7 +32,7 @@ export class AuthController {
     return this.authService.login(req.user.adm_account, req.user.adm_password); //gọi autheService để save to access-token
   }
   @isPublic()
-  @Get('login')
+  @Get('login2')
   async getLogin(@Request() req: any) {
     // Nếu không tìm thấy, chủ động ném ra lỗi 404 của NestJS
     return 'get login'; //gọi autheService để save to access-token

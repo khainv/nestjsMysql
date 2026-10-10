@@ -6,6 +6,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, FindOptionsWhere } from 'typeorm';
 import { Admin } from '../../entities/admin.entity.js';
+import { AdminToken } from '../../entities/admin.token.entity.js';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
@@ -13,6 +14,8 @@ export class AdminkService {
   constructor(
     @InjectRepository(Admin)
     private adminRepository: Repository<Admin>,
+    @InjectRepository(AdminToken)
+    private adminTokenRepository: Repository<AdminToken>,
   ) {}
   findAll(): Promise<Admin[]> {
     return this.adminRepository.find();
@@ -81,5 +84,23 @@ export class AdminkService {
       return adm;
     }
     return null;
+  }
+  async findOneAdminToken(
+    fields: FindOptionsWhere<AdminToken>,
+  ): Promise<AdminToken> {
+    const admToken = await this.adminTokenRepository.findOne({
+      where: fields,
+    });
+    if (!admToken) {
+      throw new NotFoundException(`Không tìm thấy tài khoản Admin này`);
+    }
+    return admToken;
+  }
+  async saveRefeshToken(refresh_token: string, adm_id: number) {
+    const adm = await this.findOneAdminToken({
+      adm_id,
+    });
+    adm.refesh_token = refresh_token;
+    return this.adminTokenRepository.save(adm);
   }
 }
