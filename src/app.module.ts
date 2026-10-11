@@ -13,6 +13,7 @@ import { LoggingMiddleware } from './middlewares/logging/logging.middleware.js';
 import { AuthModule } from './modules/auth/auth.module.js';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from './modules/auth/guards/jwt-auth.guard.js';
+import { AdminToken } from './entities/admin.token.entity.js';
 
 export const { ObserveModule, ObserveInstrument } = createObserveModule();
 
@@ -32,7 +33,7 @@ export const { ObserveModule, ObserveInstrument } = createObserveModule();
       username: 'root',
       password: '',
       database: 'nestjsdb',
-      entities: [Admin], //auto create table
+      entities: [Admin,AdminToken], //auto create table
       synchronize: true,
       logging: true,
     }),

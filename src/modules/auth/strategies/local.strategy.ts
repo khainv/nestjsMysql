@@ -9,7 +9,6 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
   }
   async validate(adm_account: string, adm_password: string) {
     console.log('1. Đã chạy vào LocalStrategy validate:');
-    stop;
     const adm = await this.adminkService.validateAdmin(
       adm_account,
       adm_password,
@@ -19,8 +18,7 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
         `thông tin xác thực không đúng ${adm_account}`,
       );
     }
-    console.log('check xem vao đến đây chưa');
-    console.log(adm);
+    console.log('local.strategy.ts | check xem vao đến đây chưa');
     return adm; //tra ve thong tin adm, de cắm vào request.user
   }
 }

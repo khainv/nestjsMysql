@@ -87,20 +87,29 @@ export class AdminkService {
   }
   async findOneAdminToken(
     fields: FindOptionsWhere<AdminToken>,
-  ): Promise<AdminToken> {
+  ): Promise<AdminToken| null> {
     const admToken = await this.adminTokenRepository.findOne({
       where: fields,
     });
     if (!admToken) {
-      throw new NotFoundException(`Không tìm thấy tài khoản Admin này`);
+      return null
     }
     return admToken;
   }
   async saveRefeshToken(refresh_token: string, adm_id: number) {
-    const adm = await this.findOneAdminToken({
-      adm_id,
-    });
-    adm.refesh_token = refresh_token;
-    return this.adminTokenRepository.save(adm);
-  }
+    const adm = await this.findOneAdminToken({adm_id});
+    let admToken:any={}
+    if(!adm){
+      console.log('chay vao 1')
+      admToken = this.adminTokenRepository.create({
+      adm_id: adm_id,
+      refresh_token: refresh_token,
+    })}else{
+      console.log('chay vao 2')
+      admToken.adm_id=adm_id;
+      admToken.refresh_token = refresh_token;
+    }
+    return this.adminTokenRepository.save(admToken);
 }
+  }
+

@@ -15,7 +15,7 @@ export class AdminToken {
   adm_id: number;
 
   @Column({ nullable: true })
-  refesh_token?: string;
+  refresh_token?: string;
 
   @Column({ nullable: true })
   adm_name: string;

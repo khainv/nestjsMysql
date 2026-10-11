@@ -20,7 +20,7 @@ export class AuthService {
   }> {
     const user = await this.adminkService.findOne({ adm_account });
     if (user?.adm_password !== password) {
-      throw new UnauthorizedException('password không trùng nhau');
+      throw new UnauthorizedException('auth.service.ts | password không trùng nhau');
     }
     // Payload chứa thông tin định danh người dùng
     const payload = { sub: user.id, adm_account: user.adm_account };

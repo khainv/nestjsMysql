@@ -23,7 +23,7 @@ async function bootstrap() {
   app.useGlobalInterceptors(new CentralizedLoggingInterceptor());
 
   // Áp dụng AuthRedirectFilter cho toàn bộ các route trong dự án
-  app.useGlobalFilters(new AuthRedirectFilter());
+  //app.useGlobalFilters(new AuthRedirectFilter());
 
   await app.listen(process.env.PORT ?? 3000);
 }
