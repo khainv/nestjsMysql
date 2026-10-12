@@ -6,6 +6,7 @@ import {
   UseGuards,
   Request,
   Get,
+  BadRequestException,
 } from '@nestjs/common';
 import { AuthService } from './auth.service.js';
 import { AdminkService } from '../admink/admink.service.js';
@@ -32,10 +33,17 @@ export class AuthController {
     }
     return this.authService.login(req.user.adm_account, req.user.adm_password); //gọi autheService để save to access-token
   }
-  @isPublic()
-  @Get('login2')
-  async getLogin(@Request() req: any) {
-    // Nếu không tìm thấy, chủ động ném ra lỗi 404 của NestJS
-    return 'get login'; //gọi autheService để save to access-token
-  }
+@Post('refresh-token')
+async refreshToken(@Body() {refreshToken} :{refreshToken:any}){
+if(!refreshToken){
+  throw new BadRequestException('refresh token không tồn tại')
+}
+const adm= await this.authService.verifyRefreshToken(refreshToken);
+if(adm){
+const adm1=await this.adminkService.findOneById(adm.adm_id);
+return this.authService.login(adm1.adm_account,adm1.adm_password)
+}else{
+  return 'lỗi auth.controller.ts'
+}
+}
 }

@@ -31,12 +31,10 @@ export class AdminkService {
     }
     return admin;
   }
-  async findOneById(id: number): Promise<Admin[]> {
-    const admin = await this.adminRepository.find({
-      where: { id },
-    });
+  async findOneById(id: number): Promise<Admin> {
+    const admin = await this.adminRepository.findOneBy(id);
     // Nếu không tìm thấy, chủ động ném ra lỗi 404 của NestJS
-    if (!admin || admin.length == 0) {
+    if (!admin) {
       throw new NotFoundException(
         `Không tìm thấy tài khoản Admin với ID = ${id}`,
       );
@@ -100,16 +98,24 @@ export class AdminkService {
     const adm = await this.findOneAdminToken({adm_id});
     let admToken:any={}
     if(!adm){
-      console.log('chay vao 1')
       admToken = this.adminTokenRepository.create({
       adm_id: adm_id,
       refresh_token: refresh_token,
     })}else{
-      console.log('chay vao 2')
       admToken.adm_id=adm_id;
       admToken.refresh_token = refresh_token;
     }
     return this.adminTokenRepository.save(admToken);
+}
+async verifyRefreshToken(refreshToken:any,adm_id:number){
+  const adm=await this.adminTokenRepository.findOneBy({adm_id});
+  if(adm && adm.refresh_token){
+    const status = await bcrypt.compare(refreshToken,adm.refresh_token)
+  if(status){
+    return adm
+  }
+  }
+  return false
 }
   }
 

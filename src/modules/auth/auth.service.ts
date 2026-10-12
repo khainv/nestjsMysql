@@ -29,11 +29,21 @@ export class AuthService {
       expiresIn: JWT_EXPIRE,
     });
     const hashRefeshToken = await bcrypt.hash(refesh_token, 10);
-    this.adminkService.saveRefeshToken(hashRefeshToken, user.id);
+    await this.adminkService.saveRefeshToken(hashRefeshToken, user.id);
     return {
       adm_name: user.adm_name,
       access_token: await this.jwtService.signAsync(payload),
       refresh_token: refesh_token,
     };
+  }
+  async verifyRefreshToken(refesh_token:string){
+    const decode=await this.jwtService.decode(refesh_token);
+    if(decode){
+      const adm=await this.adminkService.verifyRefreshToken(refesh_token,decode.sub)
+      if(adm){
+        return adm;
+      }
+    }
+    return false;
   }
 }
