@@ -32,8 +32,7 @@ export class AdminkService {
     return admin;
   }
   async findOneById(id: number): Promise<Admin> {
-    const admin = await this.adminRepository.findOneBy(id);
-    // Nếu không tìm thấy, chủ động ném ra lỗi 404 của NestJS
+    const admin = await this.adminRepository.findOneBy({ id });
     if (!admin) {
       throw new NotFoundException(
         `Không tìm thấy tài khoản Admin với ID = ${id}`,
@@ -85,37 +84,37 @@ export class AdminkService {
   }
   async findOneAdminToken(
     fields: FindOptionsWhere<AdminToken>,
-  ): Promise<AdminToken| null> {
+  ): Promise<AdminToken | null> {
     const admToken = await this.adminTokenRepository.findOne({
       where: fields,
     });
     if (!admToken) {
-      return null
+      return null;
     }
     return admToken;
   }
   async saveRefeshToken(refresh_token: string, adm_id: number) {
-    const adm = await this.findOneAdminToken({adm_id});
-    let admToken:any={}
-    if(!adm){
+    const adm = await this.findOneAdminToken({ adm_id });
+    let admToken: any = {};
+    if (!adm) {
       admToken = this.adminTokenRepository.create({
-      adm_id: adm_id,
-      refresh_token: refresh_token,
-    })}else{
-      admToken.adm_id=adm_id;
+        adm_id: adm_id,
+        refresh_token: refresh_token,
+      });
+    } else {
+      admToken.adm_id = adm_id;
       admToken.refresh_token = refresh_token;
     }
     return this.adminTokenRepository.save(admToken);
+  }
+  async verifyRefreshToken(refreshToken: any, adm_id: number) {
+    const adm = await this.adminTokenRepository.findOneBy({ adm_id });
+    if (adm && adm.refresh_token) {
+      const status = await bcrypt.compare(refreshToken, adm.refresh_token);
+      if (status) {
+        return adm;
+      }
+    }
+    return false;
+  }
 }
-async verifyRefreshToken(refreshToken:any,adm_id:number){
-  const adm=await this.adminTokenRepository.findOneBy({adm_id});
-  if(adm && adm.refresh_token){
-    const status = await bcrypt.compare(refreshToken,adm.refresh_token)
-  if(status){
-    return adm
-  }
-  }
-  return false
-}
-  }
-

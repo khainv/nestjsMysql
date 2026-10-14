@@ -1,1 +1,5 @@
 - Nếu bị xung đột port thì kill port =>npx kill-port 3000
+jwt-auth.guard.ts (Chạy trước):
+jwt.strategy.ts (Chạy sau)
+Flow login
+    +login=>localGuard check login=>chưa login => validate user=> thành công=>tạo token và refresh token

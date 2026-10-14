@@ -20,7 +20,7 @@ export class AuthController {
     private readonly adminkService: AdminkService,
   ) {}
   @isPublic() //bo qua jwt-auth.guard.ts cai global
-@UseGuards(LocalAuthGuard)//Kích hoạt LocalAuthGuard
+  @UseGuards(LocalAuthGuard) //Kích hoạt LocalAuthGuard
   @Post('login')
   async login(@Request() req: any) {
     //console.log(req.user.adm_account);
@@ -33,17 +33,17 @@ export class AuthController {
     }
     return this.authService.login(req.user.adm_account, req.user.adm_password); //gọi autheService để save to access-token
   }
-@Post('refresh-token')
-async refreshToken(@Body() {refreshToken} :{refreshToken:any}){
-if(!refreshToken){
-  throw new BadRequestException('refresh token không tồn tại')
-}
-const adm= await this.authService.verifyRefreshToken(refreshToken);
-if(adm){
-const adm1=await this.adminkService.findOneById(adm.adm_id);
-return this.authService.login(adm1.adm_account,adm1.adm_password)
-}else{
-  return 'lỗi auth.controller.ts'
-}
-}
+  @Post('refresh-token')
+  async refreshToken(@Body() { refreshToken }: { refreshToken: any }) {
+    if (!refreshToken) {
+      throw new BadRequestException('refresh token không tồn tại');
+    }
+    const adm = await this.authService.verifyRefreshToken(refreshToken);
+    if (adm) {
+      const adm1 = await this.adminkService.findOneById(adm.adm_id);
+      return this.authService.login(adm1.adm_account, adm1.adm_password);
+    } else {
+      return 'lỗi auth.controller.ts';
+    }
+  }
 }

@@ -14,6 +14,7 @@ import { AuthModule } from './modules/auth/auth.module.js';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from './modules/auth/guards/jwt-auth.guard.js';
 import { AdminToken } from './entities/admin.token.entity.js';
+import { DB_HOST, DB_NAME, DB_PASS, DB_USER } from './constantsk.js';
 
 export const { ObserveModule, ObserveInstrument } = createObserveModule();
 
@@ -28,12 +29,12 @@ export const { ObserveModule, ObserveInstrument } = createObserveModule();
     // }),
     TypeOrmModule.forRoot({
       type: 'mysql',
-      host: 'localhost',
+      host: DB_HOST,
       port: 3306,
-      username: 'root',
-      password: '',
-      database: 'nestjsdb',
-      entities: [Admin,AdminToken], //auto create table
+      username: DB_USER,
+      password: DB_PASS,
+      database: DB_NAME,
+      entities: [Admin, AdminToken], //auto create table
       synchronize: true,
       logging: true,
     }),
