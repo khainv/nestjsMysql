@@ -4,5 +4,6 @@ export const DB_USER = 'root';
 export const DB_PASS = '';
 export const JWT_SECRET = 'signeofKnv';
 export const JWT_EXPIRE = '1h';
+export const JWT_REFRESH_TOKEN_SECRET='knv';
 export const JWT_REFRESH_TOKEN_EXPIRE = '7d';
 export const IS_PUBLIC_ROUTER = 'isPublic';

@@ -1,7 +1,7 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { AdminkService } from '../admink/admink.service.js';
-import { JWT_EXPIRE } from '../../constantsk.js';
+import { JWT_EXPIRE, JWT_REFRESH_TOKEN_EXPIRE, JWT_REFRESH_TOKEN_SECRET } from '../../constantsk.js';
 import * as bcrypt from 'bcrypt';
 @Injectable()
 export class AuthService {
@@ -20,32 +20,29 @@ export class AuthService {
   }> {
     const user = await this.adminkService.findOne({ adm_account });
     if (user?.adm_password !== password) {
-      throw new UnauthorizedException(
-        'auth.service.ts | password không trùng nhau',
-      );
+      throw new UnauthorizedException('auth.service.ts | password không trùng nhau');
     }
     // Payload chứa thông tin định danh người dùng
     const payload = { sub: user.id, adm_account: user.adm_account };
-    const access_token = await this.jwtService.signAsync(payload);
-    const refresh_token = await this.jwtService.signAsync(payload, {
-      expiresIn: '7d',
+    const access_token= await this.jwtService.signAsync(payload);
+    const refesh_token = await this.jwtService.signAsync(payload, {
+      secret:JWT_REFRESH_TOKEN_SECRET,
+      expiresIn: JWT_REFRESH_TOKEN_EXPIRE,
     });
-    const hashRefeshToken = await bcrypt.hash(refresh_token, 10);
+    const hashRefeshToken = await bcrypt.hash(refesh_token, 10);
+    //save hashRefreshToken
     await this.adminkService.saveRefeshToken(hashRefeshToken, user.id);
     return {
       adm_name: user.adm_name,
       access_token: access_token,
-      refresh_token: refresh_token,
+      refresh_token: refesh_token,
     };
   }
-  async verifyRefreshToken(refesh_token: string) {
-    const decode = await this.jwtService.decode(refesh_token);
-    if (decode) {
-      const adm = await this.adminkService.verifyRefreshToken(
-        refesh_token,
-        decode.sub,
-      );
-      if (adm) {
+  async verifyRefreshToken(refesh_token:string){
+    const decode=await this.jwtService.decode(refesh_token);
+    if(decode){
+      const adm=await this.adminkService.verifyRefreshToken(refesh_token,decode.sub)
+      if(adm){
         return adm;
       }
     }

@@ -8,6 +8,7 @@ import { IS_PUBLIC_ROUTER } from '../../../constantsk.js';
 import { Reflector } from '@nestjs/core';
 
 @Injectable()
+//AuthGuard('jwt') gọi strategies jwt
 export class JwtAuthGuard extends AuthGuard('jwt') {
   constructor(private reflector: Reflector) {
     super();
